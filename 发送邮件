@@ -1,0 +1,51 @@
+# -*- coding: utf-8 -*
+
+# email库
+from email.mime.text import MIMEText
+from email.header import Header
+from smtplib import SMTP_SSL
+from libs.config import *
+
+class sendMail():
+
+    # 读取文件内容生成正文
+    def get_message(self, mod):
+        # 根据选择的mod来确定生成的message是纯文本还是html格式
+        if mod == 'plain':
+            return self.message
+
+    # 发送邮件
+    def send_mail(self,TITLE,CONTENT):
+        self.sender = SENDER
+        self.receiver = RECEIVERS
+        self.title = TITLE
+        self.password = PASSWORD
+        self.host_server = SERVER
+        # ssl登录
+        smtp = SMTP_SSL(self.host_server)
+        # set_debuglevel()是用来调试的。参数值为1表示开启调试模式，参数值为0关闭调试模式
+        smtp.set_debuglevel(0)
+        smtp.ehlo(self.host_server)
+        # 登录邮箱
+        smtp.login(self.sender, self.password)
+        # 邮件内容
+        mail_content = CONTENT
+        # 构建邮件正文
+        msg = MIMEText(mail_content, 'plain', 'utf-8')
+        # 标题
+        msg["Subject"] = Header(self.title, 'utf-8')
+        # 发送者邮箱
+        msg["From"] = self.sender
+        # 接收方邮箱
+        msg["To"] = self.receiver[0]
+
+        # 发送邮件，三个参数，发送者，接收者，邮件内容
+        smtp.sendmail(self.sender, self.receiver, msg.as_string())
+        # 退出
+        smtp.quit()
+        print('success')
+
+    def par(self):
+        pass
+# sendmail = sendMail()
+# sendmail.send_mail()
